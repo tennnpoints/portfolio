@@ -1,0 +1,20 @@
+[
+    {
+        "model":"tasks.UserData",
+        "pk":1,
+        "fields":{
+            "user_name":"asd",
+            "mail_address":"asd@qwe.com",
+            "password":"asd"
+        }
+    },
+    {
+        "model":"tasks.UserData",
+        "pk":2,
+        "fields":{
+            "user_name":"qwe",
+            "mail_address":"qwe@asd.com",
+            "password":"asd"
+        }
+    }
+]

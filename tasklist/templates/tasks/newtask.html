@@ -1,0 +1,98 @@
+{% extends 'tasks/base.html' %}
+
+{% load static %}
+{% block css %}
+{% endblock %}
+
+{% block content %}
+
+<p>new tasks</p>
+    <label for="inputTaskname" class="sr-only">タスク名</label>
+    <input type="text" id="task_name" class="form-control w-50" placeholder="タスク名" required>
+    <div style="display:none" id="nameerror" class="alert alert-danger w-50" role="alert">タスク名が不正です</div>
+
+    <label for="inputTaskdesc" class="sr-only">説明</label>
+    <input type="text" id="task_desc" class="form-control w-50" placeholder="タスクの説明" required>
+    <div style="display:none" id="descerror" class="alert alert-danger w-50" role="alert">タスク説明が不正です</div>
+
+    <label for="inputRepeat" class="sr-only">繰り返し</label>
+    <input type="checkbox" id="repeat" value="1">
+
+    <select id="repeattype" disabled>
+        <option value="-1">--曜日を選択してください--</option>
+        <option value="0">月曜日</option>
+        <option value="1">火曜日</option>
+        <option value="2">水曜日</option>
+        <option value="3">木曜日</option>
+        <option value="4">金曜日</option>
+        <option value="5">土曜日</option>
+        <option value="6">日曜日</option>
+    </select>
+    <div style="display:none" id="repeaterror" class="alert alert-danger w-50" role="alert">曜日選択が不正です。(繰り返しの場合は曜日を指定してください。</div>
+    <br>
+<button id="submit" class="btn btn-lg btn-primary btn-block">タスク作成</button>
+<a class="btn btn-lg btn-primary btn-block" type="button" href="{% url 'tasks:mypage' %}">戻る</a>
+{% endblock %}
+
+{% block js %}
+<script>
+    $('#repeat').on('click',function(e){
+        let repeatcheck = $('#repeat:checked').val();
+        if ( repeatcheck == 1 ){
+            $('#repeattype').prop('disabled',false)
+        }else{
+            $('#repeattype').prop('disabled',true)
+            $('#repeattype').val('-1');
+        }
+    })
+
+    $('#submit').on('click',function(e){
+        $('#nameerror').hide();
+        $('#descerror').hide();
+        let task_name = $('#task_name').val();
+        let task_desc = $('#task_desc').val();
+        let repeat = $('#repeat:checked').val();
+        let repeattype = $('#repeattype').val();
+        console.log(task_name)
+        console.log(task_desc)
+        console.log(repeat)
+        console.log(repeattype)
+        
+        let params = {
+            'task_name':task_name,
+            'task_desc':task_desc,
+            'repeat':repeat,
+            'repeattype':repeattype
+        };
+        $.ajax({
+                'url':'{% url "tasks:newtask" %}',
+                'type':'POST',
+                'data':params,
+                'dataType':'json'
+        })
+        .done(function(res){
+                if ( res.error == 1 ){
+                    console.log(res)
+                    if ( res.nameerror == 1 ){
+                        $('#nameerror').show();
+                    }
+                    if ( res.descerror == 1 ){
+                        $('#descerror').show();
+                    }
+                    if ( res.repeaterror == 1 ){
+                        $('#repeaterror').html(res.errormsg);
+                        $('#repeaterror').show();
+                    }
+                }else{
+                    location.href = '{% url "tasks:mypage" %}'
+                }
+        })
+        .fail(function(res){
+                console.log('failed');
+                console.log(res);
+         })
+         
+    })
+
+</script>
+{% endblock %}

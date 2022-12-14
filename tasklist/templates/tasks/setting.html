@@ -1,0 +1,109 @@
+{% extends 'tasks/base.html' %}
+
+{% load static %}
+{% block css %}
+{% endblock %}
+
+{% block content %}
+
+<h1>ユーザー設定</h1>
+<div class="form-signin">
+    <h3>ユーザー名変更</h3>
+    <h5>現在のユーザー名：{{ user_name }}</h5>
+    <label for="inputUsername" class="sr-only">新しいユーザー名</label>
+    <input type="text" id="uname" class="form-control" placeholder="User Name" required>
+    <div style="display:none" id="nameerror" class="alert alert-danger" role="alert"></div>
+
+    <input type="button" class="regist btn btn-lg btn-primary btn-block" value="変更" id="change-username">
+    <br><br>
+
+    <h3>メールアドレス変更</h3>
+    <h5>現在のメールアドレス：{{ mail_address }}</h5>
+    <label for="inputEmail" class="sr-only">新しいメールアドレス</label>
+    <input type="email" id="uid" class="form-control" placeholder="Email address" required autofocus ">
+    <label for="inputEmail" class="sr-only">新しいメールアドレス(確認用)</label>
+    <input type="email" id="uidconf" class="form-control" placeholder="Email address" required autofocus ">
+    <div style="display:none" id="uiderror" class="alert alert-danger" role="alert"></div>
+
+    <input type="button" class="regist btn btn-lg btn-primary btn-block" value="変更" id="change-mailaddress">
+    <br><br>
+
+    <h3>パスワード変更</h3>
+    <label for="inputPassword" class="sr-only">新しいパスワード</label>
+    <input type="password" id="pwd" class="form-control" placeholder="Password" required>
+    <label for="inputPassword" class="sr-only">新しいパスワード(確認用)</label>
+    <input type="password" id="pwdconf" class="form-control" placeholder="Password" required>
+    <div style="display:none" id="pwderror" class="alert alert-danger" role="alert"></div>
+
+    <input type="button" class="regist btn btn-lg btn-primary btn-block" value="変更" id="change-password">
+    <br><br>
+
+</div>
+<a class="btn btn-lg btn-primary btn-block" type="button" href="{% url 'tasks:mypage' %}">戻る</a>
+{% endblock %}
+
+{% block js %}
+<script>
+        $('.regist').on('click',function(e){
+            $('#uiderror').hide();
+            $('#pwderror').hide();
+            let ids = $(this).attr('id').split('-');
+            let uname = $('#uname').val();
+            let uid = $('#uid').val();
+            let uidconf = $('#uidconf').val();
+            let pwd = $('#pwd').val();
+            let pwdconf = $('#pwdconf').val();
+            let param = {
+                'behavior':ids[1],
+                'uname':uname,
+                'uid':uid,
+                'uidconf':uidconf,
+                'pwd':pwd,
+                'pwdconf':pwdconf
+            };
+            console.log(param);
+            $.ajax({
+                'url':'{% url "tasks:setting" %}',
+                'type':'POST',
+                'data':param,
+                'dataType':'json'
+            })
+            .done(function(res){
+                console.log(res)
+                if ( res.error == 1 ){
+                    if ( res.nameerror == 1 ) {
+                        $('#nameerror').text(res.nameerrormsg);
+                        $('#nameerror').show();
+                    }
+                    if ( res.uiderror == 1 ) {
+                        $('#mailerror').text(res.uiderrormsg);
+                        $('#mailerror').show();
+                    }
+                    if ( res.pwderror == 1 ) {
+                        $('#pwderror').text(res.pwderrormsg);
+                        $('#pwderror').show();
+                    }
+                }else{
+                    switch (res.behavior){
+                        case 'username':
+                            alert('ユーザー名の変更が完了しました。')
+                            break;
+
+                        case 'mailaddress':
+                            alert('メールアドレスの変更が完了しました。')
+                            break;
+                        case 'password':
+                            alert('パスワードの変更が完了しました。')
+                            break;
+                    }
+                    location.reload();
+                }
+                
+            })
+            .fail(function(res){
+                console.log('failed');
+                console.log(res);
+            })
+        })
+</script>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'tasks/base.html' %}
+
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/signin.css' %}" ></link>
+{% endblock %}
+
+{% block content %}
+<form class="form-signin" method="post" action="{% url 'tasks:login' %}">
+    {% csrf_token %}
+    <h1 class="h3 mb-3 font-weight-normal">Tasklist</h1>
+    <label for="inputEmail" class="sr-only"></label>
+    <input type="email" name="userid" id="inputEmail" class="form-control" placeholder="Email address" required autofocus value="{{ mail }}">
+    <label for="inputPassword" class="sr-only"></label>
+    <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+    {% if  error  == 1 %}
+    メールアドレスまたはパスワードが異なります<br>
+    {% endif %}
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    <a class="btn btn-lg btn-primary btn-block" type="button" href="{% url 'tasks:register' %}">Register</a><br>
+    <a href="{% url 'tasks:pwd_reset' %}">パスワードがわからない場合</a>
+   
+</form>
+{% endblock %}

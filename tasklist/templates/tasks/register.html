@@ -1,0 +1,83 @@
+{% extends 'tasks/base.html' %}
+
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/signin.css' %}" ></link>
+{% endblock %}
+
+{% block content %}
+<div class="form-signin">
+    <h1 class="h3 mb-3 font-weight-normal">新規登録</h1>
+    
+    <label for="inputUsername" class="sr-only">ユーザー名</label>
+    <input type="text" id="uname" class="form-control" placeholder="User Name" required>
+    <div style="display:none" id="nameerror" class="alert alert-danger" role="alert"></div>
+
+    <label for="inputEmail" class="sr-only">メールアドレス</label>
+    <input type="email" id="uid" class="form-control" placeholder="Email address" required autofocus ">
+    <label for="inputEmail" class="sr-only">メールアドレス(確認用)</label>
+    <input type="email" id="uidconf" class="form-control" placeholder="Email address" required autofocus ">
+    <div style="display:none" id="uiderror" class="alert alert-danger" role="alert"></div>
+
+    <label for="inputPassword" class="sr-only">パスワード</label>
+    <input type="password" id="pwd" class="form-control" placeholder="Password" required>
+    <label for="inputPassword" class="sr-only">パスワード(確認用)</label>
+    <input type="password" id="pwdconf" class="form-control" placeholder="Password" required>
+    <div style="display:none" id="pwderror" class="alert alert-danger" role="alert"></div>
+
+    <input type="button" class="btn btn-lg btn-primary btn-block" value="Regist" id="regist">
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+        $('#regist').on('click',function(e){
+            e.preventDefault();
+            $('#uiderror').hide();
+            $('#pwderror').hide();
+            let uname = $('#uname').val();
+            let uid = $('#uid').val();
+            let uidconf = $('#uidconf').val();
+            let pwd = $('#pwd').val();
+            let pwdconf = $('#pwdconf').val();
+            let param = {
+                'uname':uname,
+                'uid':uid,
+                'uidconf':uidconf,
+                'pwd':pwd,
+                'pwdconf':pwdconf
+            };
+            console.log(param);
+            $.ajax({
+                'url':'{% url "tasks:register" %}',
+                'type':'POST',
+                'data':param,
+                'dataType':'json'
+            })
+            .done(function(res){
+                console.log(res)
+                if ( res.error == 1 ){
+                    if ( res.nameerror == 1 ) {
+                        $('#nameerror').text(res.nameerrormsg);
+                        $('#nameerror').show();
+                    }
+                    if ( res.uiderror == 1 ) {
+                        $('#uiderror').text(res.uiderrormsg);
+                        $('#uiderror').show();
+                    }
+                    if ( res.pwderror == 1 ) {
+                        $('#pwderror').text(res.pwderrormsg);
+                        $('#pwderror').show();
+                    }
+                }else{
+                    location.href = '{% url "tasks:mypage" %}'
+                }
+                
+            })
+            .fail(function(res){
+                console.log('failed');
+                console.log(res);
+            })
+        })
+</script>
+{% endblock %}

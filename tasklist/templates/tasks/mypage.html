@@ -1,0 +1,95 @@
+{% extends 'tasks/base.html' %}
+
+{% load static %}
+{% block css %}
+{% endblock %}
+
+{% block content %}
+
+<h1>mypage</h>
+<p>{{ request.session.username }}</p>
+<p>{{ request.session.userid }}</p>
+
+<div class="accordion w-50" id="tasklists">
+<p>undone</p>
+{% for tasks in task_undone %}
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="taskhead-{{ tasks.id }}">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#taskdesc-{{ tasks.id }}" aria-expanded="true" aria-controls="taskdesc-{{ tasks.id }}">
+          {{ tasks.task_name }}
+        </button>
+      </h2>
+      <div id="taskdesc-{{ tasks.id }}" class="accordion-collapse collapse hide" aria-labelledby="taskhead-{{ tasks.id }}" data-bs-parent="#tasklists">
+        <div class="accordion-body">
+            Description : {{ tasks.task_desc }}<br>
+            Status : {{ tasks.status }}<br>
+            Deadline : {{ tasks.deadline }}<br>
+            Repeat : {{ tasks.repeat }}<br>
+            Timeover : {{ tasks.timeover }}<br>
+            <button id="task-{{ tasks.id }}-toggle" type="button" class="task btn btn-primary">完了</button>
+            <button id="task-{{ tasks.id }}-delete" type="button" class="task btn btn-danger">削除</button>
+        </div>
+      </div>
+    </div>    
+{% endfor %}
+
+<p>done</p>
+{% for tasks in task_done %}
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="taskhead-{{ tasks.id }}">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#taskdesc-{{ tasks.id }}" aria-expanded="true" aria-controls="taskdesc-{{ tasks.id }}">
+          {{ tasks.task_name }}
+        </button>
+      </h2>
+      <div id="taskdesc-{{ tasks.id }}" class="accordion-collapse collapse hide" aria-labelledby="taskhead-{{ tasks.id }}" data-bs-parent="#tasklists">
+        <div class="accordion-body">
+          Description : {{ tasks.task_desc }}<br>
+          Status : {{ tasks.status }}<br>
+          Deadline : {{ tasks.deadline }}<br>
+          Repeat : {{ tasks.repeat }}<br>
+          Timeover : {{ tasks.timeover }}<br>
+          <button id="task-{{ tasks.id }}-toggle" type="button" class="task btn btn-primary">未完了に戻す</button>
+          <button id="task-{{ tasks.id }}-delete" type="button" class="task btn btn-danger">削除</button>
+        </div>
+      </div>
+    </div>    
+{% endfor %}
+</div>
+
+
+<a class="btn btn-lg btn-primary btn-block" type="button" href="{% url 'tasks:newtask' %}">新規タスク</a>
+<a class="btn btn-lg btn-primary btn-block" type="button" href="{% url 'tasks:setting' %}">設定</a>
+{% endblock %}
+
+{% block js %}
+<script>
+    $('.task').on('click',function(e){
+      console.log('Clicked.')
+      let ids = $(this).attr('id').split('-');
+      if ( ids[2] == 'delete' ){
+        if (window.confirm('本当に削除してよろしいですか？') == false ){
+          return;
+        }
+      }
+      let param = {
+        'task_id':ids[1],
+        'status':ids[2]
+      }
+      $.ajax({
+        'url':'{% url "tasks:mypage" %}',
+        'type':'POST',
+        'data':param,
+        'dataType':'json'
+      })
+      .done(function(res){
+        console.log(res.msg);
+        location.reload();
+      })
+      .fail(function(res){
+        console.log('failed');
+        console.log(res);
+      })
+
+    })
+</script>
+{% endblock %}
