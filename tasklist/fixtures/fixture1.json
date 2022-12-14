@@ -1,6 +1,6 @@
 [
     {
-        "model":"tasks.UserData",
+        "model":"tasklist.UserData",
         "pk":1,
         "fields":{
             "user_name":"asd",
@@ -9,7 +9,7 @@
         }
     },
     {
-        "model":"tasks.UserData",
+        "model":"tasklist.UserData",
         "pk":2,
         "fields":{
             "user_name":"qwe",

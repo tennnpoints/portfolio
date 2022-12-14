@@ -1,6 +1,6 @@
 [
     {
-        "model":"tasks.TaskData",
+        "model":"tasklist.TaskData",
         "pk":3,
         "fields":{
             "user_id":1,
@@ -11,7 +11,7 @@
             "repeat":true,
             "repeattype":0}
     },{
-        "model":"tasks.TaskData",
+        "model":"tasklist.TaskData",
         "pk":4,
         "fields":{
             "user_id":1,
