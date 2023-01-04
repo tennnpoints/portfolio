@@ -2,11 +2,29 @@
 
 {% load static %}
 {% block css %}
+<link rel="stylesheet" href="{% static 'css/main.css' %}" ></link>
 {% endblock %}
 
 {% block content %}
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="#">Tasklist</a>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'tasks:mypage' %}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'tasks:newtask' %}">New Task</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url 'tasks:setting' %}">Setting<span class="sr-only">(current)</span></a>
+        </li>
+      </ul>
+    </div>
+</nav>
 
-<h1>ユーザー設定</h1>
+<h2>ユーザー設定</h2>
+<br>
 <div class="form-signin">
     <h3>ユーザー名変更</h3>
     <h5>現在のユーザー名：{{ user_name }}</h5>
@@ -39,7 +57,6 @@
     <br><br>
 
 </div>
-<a class="btn btn-lg btn-primary btn-block" type="button" href="{% url 'tasks:mypage' %}">戻る</a>
 {% endblock %}
 
 {% block js %}

@@ -2,16 +2,33 @@
 
 {% load static %}
 {% block css %}
+<link rel="stylesheet" href="{% static 'css/main.css' %}" ></link>
 {% endblock %}
 
 {% block content %}
 
-<h1>mypage</h>
-<p>{{ request.session.username }}</p>
-<p>{{ request.session.userid }}</p>
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="#">Tasklist</a>
+  <div class="collapse navbar-collapse" id="navbarCollapse">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'tasks:mypage' %}">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'tasks:newtask' %}">New Task</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'tasks:setting' %}">Setting</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<h1><p>{{ request.session.username }}さん、おかえりなさい</p></h1>
 
 <div class="accordion w-50" id="tasklists">
-<p>undone</p>
+<h3>未完了のタスク</h3>
+{% if task_undone %}
 {% for tasks in task_undone %}
     <div class="accordion-item">
       <h2 class="accordion-header" id="taskhead-{{ tasks.id }}">
@@ -21,19 +38,29 @@
       </h2>
       <div id="taskdesc-{{ tasks.id }}" class="accordion-collapse collapse hide" aria-labelledby="taskhead-{{ tasks.id }}" data-bs-parent="#tasklists">
         <div class="accordion-body">
-            Description : {{ tasks.task_desc }}<br>
-            Status : {{ tasks.status }}<br>
-            Deadline : {{ tasks.deadline }}<br>
-            Repeat : {{ tasks.repeat }}<br>
-            Timeover : {{ tasks.timeover }}<br>
-            <button id="task-{{ tasks.id }}-toggle" type="button" class="task btn btn-primary">完了</button>
-            <button id="task-{{ tasks.id }}-delete" type="button" class="task btn btn-danger">削除</button>
+          <b>{{ tasks.task_desc }}</b><br>
+          {% if tasks.deadline %}
+          締め切り：{{ tasks.deadline }}<br>
+          {% else %}
+          締め切り：なし<br>
+          {% endif %}
+          {% if tasks.repeat == True %}
+          繰り返し：する<br>
+          {% else %}
+          繰り返し：しない<br>
+          {% endif %}
+          <button id="task-{{ tasks.id }}-toggle" type="button" class="task btn btn-primary">未完了に戻す</button>
+          <button id="task-{{ tasks.id }}-delete" type="button" class="task btn btn-danger">削除</button>
         </div>
       </div>
     </div>    
 {% endfor %}
+{% else %}
+<p>未完了のタスクはありません</p>
+{% endif %}
 
-<p>done</p>
+<h3>完了済のタスク</h3>
+{% if task_done %}
 {% for tasks in task_done %}
     <div class="accordion-item">
       <h2 class="accordion-header" id="taskhead-{{ tasks.id }}">
@@ -43,22 +70,29 @@
       </h2>
       <div id="taskdesc-{{ tasks.id }}" class="accordion-collapse collapse hide" aria-labelledby="taskhead-{{ tasks.id }}" data-bs-parent="#tasklists">
         <div class="accordion-body">
-          Description : {{ tasks.task_desc }}<br>
-          Status : {{ tasks.status }}<br>
-          Deadline : {{ tasks.deadline }}<br>
-          Repeat : {{ tasks.repeat }}<br>
-          Timeover : {{ tasks.timeover }}<br>
+          <b>{{ tasks.task_desc }}</b><br>
+          {% if tasks.deadline %}
+          締め切り：{{ tasks.deadline }}<br>
+          {% else %}
+          締め切り：なし<br>
+          {% endif %}
+          {% if tasks.repeat == True %}
+          繰り返し：する<br>
+          {% else %}
+          繰り返し：しない<br>
+          {% endif %}
           <button id="task-{{ tasks.id }}-toggle" type="button" class="task btn btn-primary">未完了に戻す</button>
           <button id="task-{{ tasks.id }}-delete" type="button" class="task btn btn-danger">削除</button>
         </div>
       </div>
     </div>    
 {% endfor %}
+{% else %}
+<p>完了済のタスクはありません</p>
+{% endif %}
 </div>
 
 
-<a class="btn btn-lg btn-primary btn-block" type="button" href="{% url 'tasks:newtask' %}">新規タスク</a>
-<a class="btn btn-lg btn-primary btn-block" type="button" href="{% url 'tasks:setting' %}">設定</a>
 {% endblock %}
 
 {% block js %}

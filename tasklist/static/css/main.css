@@ -1,0 +1,11 @@
+/* Show it is fixed to the top */
+body {
+    min-height: 75rem;
+    padding-top: 4.5rem;
+    padding-left : 20px;
+    font-family: "Sawarabi Gothic";
+}
+.wf-sawarabigothic { font-family: "Sawarabi Gothic"; }
+.navbar {
+    padding-left: 20px;
+}
